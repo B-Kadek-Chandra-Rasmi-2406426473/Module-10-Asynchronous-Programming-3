@@ -138,8 +138,16 @@ impl Component for Chat {
 
     fn view(&self, ctx: &Context<Self>) -> Html {
         let submit = ctx.link().callback(|_| Msg::SubmitMessage);
+
+        let (user, _) = ctx
+            .link()
+            .context::<User>(Callback::noop())
+            .expect("context to be set");
+        let my_username = user.username.borrow().clone();
+
         html! {
             <div class="flex w-screen">
+                // Sidebar users
                 <div class="flex-none w-56 h-screen bg-gray-100">
                     <div class="text-xl p-3 font-bold">{"Users"}</div>
                     {
@@ -158,6 +166,8 @@ impl Component for Chat {
                         }).collect::<Html>()
                     }
                 </div>
+
+                // Area chat
                 <div class="grow h-screen flex flex-col">
                     <div class="w-full h-14 border-b-2 border-gray-300 flex items-center px-4">
                         <div class="text-xl font-bold">{"💬 Chat!"}</div>
@@ -165,28 +175,52 @@ impl Component for Chat {
                     <div class="w-full grow overflow-auto border-b-2 border-gray-300 p-4">
                         {
                             self.messages.iter().map(|m| {
+                                let is_mine = m.from == my_username;
                                 let avatar = format!(
                                     "https://api.dicebear.com/7.x/adventurer-neutral/svg?seed={}",
                                     m.from
                                 );
-                                html!{
-                                    <div class="flex items-end w-3/6 bg-gray-100 m-4 rounded-tl-lg rounded-tr-lg rounded-br-lg shadow">
-                                        <img class="w-8 h-8 rounded-full m-3" src={avatar} alt="avatar"/>
-                                        <div class="p-3">
-                                            <div class="text-sm font-medium">{m.from.clone()}</div>
-                                            <div class="text-xs text-gray-500 mt-1">
-                                                if m.message.ends_with(".gif") {
-                                                    <img class="mt-3 rounded" src={m.message.clone()} alt="gif"/>
-                                                } else {
-                                                    {m.message.clone()}
-                                                }
+
+                                if is_mine {
+                                    // Bubble kanan
+                                    html!{
+                                        <div class="flex flex-row-reverse items-end w-full mb-4">
+                                            <img class="w-8 h-8 rounded-full ml-3" src={avatar} alt="avatar"/>
+                                            <div class="bg-blue-500 text-white p-3 rounded-tl-lg rounded-tr-lg rounded-bl-lg shadow max-w-xs">
+                                                <div class="text-xs font-medium mb-1 text-blue-100">{m.from.clone()}</div>
+                                                <div class="text-sm">
+                                                    if m.message.ends_with(".gif") {
+                                                        <img class="mt-1 rounded" src={m.message.clone()} alt="gif"/>
+                                                    } else {
+                                                        {m.message.clone()}
+                                                    }
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    }
+                                } else {
+                                    // Bubble kiri
+                                    html!{
+                                        <div class="flex flex-row items-end w-full mb-4">
+                                            <img class="w-8 h-8 rounded-full mr-3" src={avatar} alt="avatar"/>
+                                            <div class="bg-gray-100 text-gray-800 p-3 rounded-tl-lg rounded-tr-lg rounded-br-lg shadow max-w-xs">
+                                                <div class="text-xs font-medium mb-1 text-gray-500">{m.from.clone()}</div>
+                                                <div class="text-sm">
+                                                    if m.message.ends_with(".gif") {
+                                                        <img class="mt-1 rounded" src={m.message.clone()} alt="gif"/>
+                                                    } else {
+                                                        {m.message.clone()}
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
                                 }
                             }).collect::<Html>()
                         }
                     </div>
+
+                    // Input area
                     <div class="w-full h-14 flex px-3 items-center">
                         <input
                             ref={self.chat_input.clone()}
