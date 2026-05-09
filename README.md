@@ -1,21 +1,26 @@
-# YewChat 💬
+# Tutorial 10 Asynchronous Programming (Bagian 3)
 
-> Source code for [Let’s Build a Websocket Chat Project With Rust and Yew 0.19 🦀](https://fsjohnny.medium.com/lets-build-a-websockets-project-with-rust-and-yew-0-19-60720367399f)
+### Experiment 3.1: Original code YewChat
 
-## Install
+#### Cara menjalankan:
+1. Jalankan WebSocket server:
+```
+cd SimpleWebsocketServer
+npm start
+```
+2. Jalankan YewChat frontend:
+```
+cd YewChat
+trunk serve --port 8000
+```
 
-1. Install the required toolchain dependencies:
-   ```npm i```
+3. Buka browser ke http://localhost:8000
 
-2. Follow the YewChat post!
+#### Hasil:
 
-## Branches
+![login](login.png)
 
-This repository is divided to branches that correspond to the blog post sections:
+![room-chat](chat.png)
 
-* main - The starter code.
-* routing - The code at the end of the Routing section.
-* components-part1 - The code at the end of the Components-Phase 1 section.
-* websockets - The code at the end of the Hello Websockets! section.
-* components-part2 - The code at the end of the Components-Phase 2 section.
-* websockets-part2 - The code at the end of the WebSockets-Phase 2 section.
+YewChat adalah aplikasi web chat yang dibangun menggunakan Rust dan Yew framework yang dikompilasi ke WebAssembly. Frontend berkomunikasi dengan `WebSocket` server menggunakan protokol `ws://`. Ketika user mengetik username dan klik Connect, aplikasi akan terhubung ke WebSocket server dan broadcast pesan ke semua client yang sedang terhubung. Setiap client yang terhubung akan terlihat di sidebar kiri sebagai daftar users aktif.
+
